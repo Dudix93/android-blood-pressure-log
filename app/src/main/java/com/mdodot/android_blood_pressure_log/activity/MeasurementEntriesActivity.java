@@ -1,4 +1,4 @@
-package com.mdodot.android_blood_pressure_log;
+package com.mdodot.android_blood_pressure_log.activity;
 
 import android.os.Bundle;
 
@@ -9,22 +9,20 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
-import com.mdodot.android_blood_pressure_log.ui.main.SectionsPagerAdapter;
-import com.mdodot.android_blood_pressure_log.databinding.ActivityMainBinding;
+import com.mdodot.android_blood_pressure_log.adapter.SectionsPagerAdapter;
+import com.mdodot.android_blood_pressure_log.databinding.MeasurementEntriesActivityBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class MeasurementEntriesActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    private MeasurementEntriesActivityBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = MeasurementEntriesActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());

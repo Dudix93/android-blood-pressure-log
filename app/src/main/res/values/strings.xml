@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">android-blood-pressure-log</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_new_entry">New entry</string>
+    <string name="tab_all_entries">All entries</string>
+    <string name="systolic">Systolic</string>
+    <string name="diastolic">Diastolic</string>
+    <string name="pulse">Pulse</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="save">Save</string>
 </resources>

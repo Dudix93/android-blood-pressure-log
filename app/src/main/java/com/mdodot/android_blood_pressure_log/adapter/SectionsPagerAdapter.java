@@ -1,4 +1,4 @@
-package com.mdodot.android_blood_pressure_log.ui.main;
+package com.mdodot.android_blood_pressure_log.adapter;
 
 import android.content.Context;
 
@@ -9,15 +9,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.mdodot.android_blood_pressure_log.R;
+import com.mdodot.android_blood_pressure_log.fragment.NewEntryFragment;
 
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2};
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_new_entry, R.string.tab_all_entries};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -27,9 +24,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance(position + 1);
+        return NewEntryFragment.newInstance(position + 1);
     }
 
     @Nullable
