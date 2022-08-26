@@ -1,10 +1,15 @@
 package com.mdodot.android_blood_pressure_log.fragment;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -78,6 +83,8 @@ public class NewEntryFragment extends Fragment {
         pulseTextInputEditText = (TextInputEditText) getView().findViewById(R.id.pulseTextInputEditText);
         saveMaterialButton = (MaterialButton) getView().findViewById(R.id.saveMaterialButton);
 
+        setOnSelectTimelickListener();
+        setOnSelectDatelickListener();
         setOnSaveClickListener();
     }
 
@@ -95,6 +102,53 @@ public class NewEntryFragment extends Fragment {
                     pulse = Integer.valueOf(pulseTextInputEditText.getText().toString());
                     showToast(systolic+" "+diastolic+" "+pulse);
                 }
+            }
+        });
+    }
+
+    public void setOnSelectDatelickListener() {
+        final Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        dateTextInputEditText.setText(day + "/" + (month + 1) + "/" + year);
+
+        dateTextInputEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog picker = new DatePickerDialog(getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                dateTextInputEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        },
+                        year, month, day);
+                picker.show();
+            }
+        });
+    }
+
+    public void setOnSelectTimelickListener() {
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        String minutes = minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute);
+        timeTextInputEditText.setText(String.valueOf(hour) + ":" + minutes);
+
+        timeTextInputEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimePickerDialog picker = new TimePickerDialog(getContext(),
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                String minutes = minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute);
+                                timeTextInputEditText.setText(String.valueOf(hourOfDay) + ":" + minutes);
+                            }
+                        },
+                        hour, minute, true);
+                picker.show();
             }
         });
     }
