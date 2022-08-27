@@ -21,8 +21,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mdodot.android_blood_pressure_log.R;
+import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.databinding.NewEntryFragmentBinding;
 import com.mdodot.android_blood_pressure_log.PageViewModel;
+import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -42,6 +44,9 @@ public class NewEntryFragment extends Fragment {
     private Integer systolic;
     private Integer diastolic;
     private Integer pulse;
+    private String date;
+    private String time;
+    private RoomDB roomDB;
 
     public static NewEntryFragment newInstance(int index) {
         NewEntryFragment fragment = new NewEntryFragment();
@@ -60,6 +65,7 @@ public class NewEntryFragment extends Fragment {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
         }
         pageViewModel.setIndex(index);
+        this.roomDB = RoomDB.getInstance(getContext());
     }
 
     @Override
@@ -92,16 +98,7 @@ public class NewEntryFragment extends Fragment {
         saveMaterialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (
-                        !systolicTextInputEditText.getText().toString().matches("")
-                        && !diastolicTextInputEditText.getText().toString().matches("")
-                        && !pulseTextInputEditText.getText().toString().matches("")
-                ) {
-                    systolic = Integer.valueOf(systolicTextInputEditText.getText().toString());
-                    diastolic = Integer.valueOf(diastolicTextInputEditText.getText().toString());
-                    pulse = Integer.valueOf(pulseTextInputEditText.getText().toString());
-                    showToast(systolic+" "+diastolic+" "+pulse);
-                }
+                saveMeasurement();
             }
         });
     }
@@ -111,7 +108,9 @@ public class NewEntryFragment extends Fragment {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
-        dateTextInputEditText.setText(day + "/" + (month + 1) + "/" + year);
+        if (day != 0 && month != 0 && year != 0) {
+            dateTextInputEditText.setText(getFormatedDate(day, month, year));
+        }
 
         dateTextInputEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +118,10 @@ public class NewEntryFragment extends Fragment {
                 DatePickerDialog picker = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                dateTextInputEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            public void onDateSet(DatePicker view, int year, int month, int day) {
+                                if (day != 0 && month != 0 && year != 0) {
+                                    dateTextInputEditText.setText(getFormatedDate(day, month, year));
+                                }
                             }
                         },
                         year, month, day);
@@ -133,8 +134,7 @@ public class NewEntryFragment extends Fragment {
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        String minutes = minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute);
-        timeTextInputEditText.setText(String.valueOf(hour) + ":" + minutes);
+        timeTextInputEditText.setText(getFormatedTime(hour,minute));
 
         timeTextInputEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,15 +142,43 @@ public class NewEntryFragment extends Fragment {
                 TimePickerDialog picker = new TimePickerDialog(getContext(),
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                String minutes = minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute);
-                                timeTextInputEditText.setText(String.valueOf(hourOfDay) + ":" + minutes);
+                            public void onTimeSet(TimePicker view, int hour, int minute) {
+                                timeTextInputEditText.setText(getFormatedTime(hour,minute));
                             }
                         },
                         hour, minute, true);
                 picker.show();
             }
         });
+    }
+
+    public void saveMeasurement() {
+        if (
+                !systolicTextInputEditText.getText().toString().matches("")
+                        && !diastolicTextInputEditText.getText().toString().matches("")
+                        && !pulseTextInputEditText.getText().toString().matches("")
+        ) {
+            systolic = Integer.valueOf(systolicTextInputEditText.getText().toString());
+            diastolic = Integer.valueOf(diastolicTextInputEditText.getText().toString());
+            pulse = Integer.valueOf(pulseTextInputEditText.getText().toString());
+            roomDB.measurementDao().insert(new MeasurementEntity(systolic, diastolic, pulse, date, time));
+
+            showToast(getString(R.string.measurement_saved));
+        }
+        else {
+            showToast(getString(R.string.fill_all_data));
+        }
+    }
+
+    public String getFormatedDate(int day, int month, int year) {
+        date = (day + "/" + (month + 1) + "/" + year);
+        return date;
+    }
+
+    public String getFormatedTime(int hour, int minute) {
+        String formattedMinute = minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute);
+        time = String.valueOf(hour) + ":" + formattedMinute;
+        return time;
     }
 
     public void showToast(String message) {

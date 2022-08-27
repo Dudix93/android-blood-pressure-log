@@ -8,4 +8,7 @@
     <string name="date">Date</string>
     <string name="time">Time</string>
     <string name="save">Save</string>
+    <string name="measurements">Measurements</string>
+    <string name="measurement_saved">Measurement Saved</string>
+    <string name="fill_all_data">Fill All Data</string>
 </resources>
