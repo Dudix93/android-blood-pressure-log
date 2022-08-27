@@ -1,4 +1,4 @@
-package com.mdodot.android_blood_pressure_log;
+package com.mdodot.android_blood_pressure_log.model;
 
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;

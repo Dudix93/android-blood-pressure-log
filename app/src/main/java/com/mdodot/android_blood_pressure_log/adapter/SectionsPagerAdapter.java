@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.mdodot.android_blood_pressure_log.R;
+import com.mdodot.android_blood_pressure_log.fragment.MeasurementsListFragment;
 import com.mdodot.android_blood_pressure_log.fragment.NewEntryFragment;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -24,7 +25,14 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return NewEntryFragment.newInstance(position + 1);
+        switch (position) {
+            case 0:
+                return new NewEntryFragment();
+            case 1:
+                return new MeasurementsListFragment();
+            default:
+                return null;
+        }
     }
 
     @Nullable
@@ -35,7 +43,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
         return 2;
     }
 }

@@ -35,4 +35,24 @@ public class MeasurementEntity {
         this.date = date;
         this.time = time;
     }
+
+    public int getSystolic() {
+        return systolic;
+    }
+
+    public int getDiastolic() {
+        return diastolic;
+    }
+
+    public int getPulse() {
+        return pulse;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
 }

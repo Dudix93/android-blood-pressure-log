@@ -8,14 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
@@ -23,7 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.mdodot.android_blood_pressure_log.R;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.databinding.NewEntryFragmentBinding;
-import com.mdodot.android_blood_pressure_log.PageViewModel;
+import com.mdodot.android_blood_pressure_log.model.PageViewModel;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
 /**
