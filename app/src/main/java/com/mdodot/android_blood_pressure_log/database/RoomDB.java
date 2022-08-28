@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
-@Database(entities = MeasurementEntity.class, version = 2, exportSchema = false)
+@Database(entities = MeasurementEntity.class, version = 3, exportSchema = false)
 public abstract class RoomDB extends RoomDatabase {
     private static RoomDB database;
     private static final String DATABASE_NAME = "Measurements";

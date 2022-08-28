@@ -24,16 +24,21 @@ public class MeasurementEntity {
     @ColumnInfo(name = "time")
     public String time;
 
+    @ColumnInfo(name = "note")
+    public String note;
+
     public MeasurementEntity(int systolic,
                              int diastolic,
                              int pulse,
                              String date,
-                             String time) {
+                             String time,
+                             String note) {
         this.systolic = systolic;
         this.diastolic = diastolic;
         this.pulse = pulse;
         this.date = date;
         this.time = time;
+        this.note = note;
     }
 
     public int getSystolic() {
@@ -55,4 +60,6 @@ public class MeasurementEntity {
     public String getTime() {
         return time;
     }
+
+    public String getNote() { return note; }
 }

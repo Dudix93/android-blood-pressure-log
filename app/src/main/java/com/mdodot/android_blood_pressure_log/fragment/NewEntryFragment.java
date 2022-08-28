@@ -1,7 +1,9 @@
 package com.mdodot.android_blood_pressure_log.fragment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mdodot.android_blood_pressure_log.R;
+import com.mdodot.android_blood_pressure_log.activity.NoteActivity;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.databinding.NewEntryFragmentBinding;
 import com.mdodot.android_blood_pressure_log.model.PageViewModel;
@@ -38,12 +41,14 @@ public class NewEntryFragment extends Fragment {
     private TextInputEditText systolicTextInputEditText;
     private TextInputEditText diastolicTextInputEditText;
     private TextInputEditText pulseTextInputEditText;
+    private TextInputEditText noteTextInputEditText;
     private MaterialButton saveMaterialButton;
     private Integer systolic;
     private Integer diastolic;
     private Integer pulse;
     private String date;
     private String time;
+    private String note;
     private RoomDB roomDB;
     private static OnMeasurementAddedListener onMeasurementAddedListener;
 
@@ -86,14 +91,38 @@ public class NewEntryFragment extends Fragment {
         systolicTextInputEditText = (TextInputEditText) getView().findViewById(R.id.systolicTextInputEditText);
         diastolicTextInputEditText = (TextInputEditText) getView().findViewById(R.id.diastolicTextInputEditText);
         pulseTextInputEditText = (TextInputEditText) getView().findViewById(R.id.pulseTextInputEditText);
+        noteTextInputEditText = (TextInputEditText) getView().findViewById(R.id.noteTextInputEditText);
         saveMaterialButton = (MaterialButton) getView().findViewById(R.id.saveMaterialButton);
 
-        setOnSelectTimelickListener();
-        setOnSelectDatelickListener();
-        setOnSaveClickListener();
+        setOnSelectTimePressed();
+        setOnSelectDatePressed();
+        setOnComposeNotePressed();
+        setOnSaveButtonPressed();
     }
 
-    private void setOnSaveClickListener() {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 1) {
+            noteTextInputEditText.setText(data.getStringExtra("note_details"));
+        }
+    }
+
+    private void setOnComposeNotePressed() {
+        noteTextInputEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), NoteActivity.class);
+                String note = noteTextInputEditText.getText().toString();
+                if (note != "") {
+                    intent.putExtra("note", note);
+                }
+                startActivityForResult(intent, 1);
+            }
+        });
+    }
+
+    private void setOnSaveButtonPressed() {
         saveMaterialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,7 +131,7 @@ public class NewEntryFragment extends Fragment {
         });
     }
 
-    public void setOnSelectDatelickListener() {
+    public void setOnSelectDatePressed() {
         final Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
@@ -129,7 +158,7 @@ public class NewEntryFragment extends Fragment {
         });
     }
 
-    public void setOnSelectTimelickListener() {
+    public void setOnSelectTimePressed() {
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
@@ -160,7 +189,8 @@ public class NewEntryFragment extends Fragment {
             systolic = Integer.valueOf(systolicTextInputEditText.getText().toString());
             diastolic = Integer.valueOf(diastolicTextInputEditText.getText().toString());
             pulse = Integer.valueOf(pulseTextInputEditText.getText().toString());
-            MeasurementEntity measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time);
+            note = noteTextInputEditText.getText().toString();
+            MeasurementEntity measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time, note);
             roomDB.measurementDao().insert(measurementEntity);
 
             onMeasurementAddedListener.onNewMeasurementInsertedListener(measurementEntity);
