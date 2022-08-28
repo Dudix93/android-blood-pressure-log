@@ -45,6 +45,7 @@ public class NewEntryFragment extends Fragment {
     private String date;
     private String time;
     private RoomDB roomDB;
+    private static OnMeasurementAddedListener onMeasurementAddedListener;
 
     public static NewEntryFragment newInstance(int index) {
         NewEntryFragment fragment = new NewEntryFragment();
@@ -159,13 +160,25 @@ public class NewEntryFragment extends Fragment {
             systolic = Integer.valueOf(systolicTextInputEditText.getText().toString());
             diastolic = Integer.valueOf(diastolicTextInputEditText.getText().toString());
             pulse = Integer.valueOf(pulseTextInputEditText.getText().toString());
-            roomDB.measurementDao().insert(new MeasurementEntity(systolic, diastolic, pulse, date, time));
+            MeasurementEntity measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time);
+            roomDB.measurementDao().insert(measurementEntity);
+
+            onMeasurementAddedListener.onNewMeasurementInsertedListener(measurementEntity);
 
             showToast(getString(R.string.measurement_saved));
         }
         else {
             showToast(getString(R.string.fill_all_data));
         }
+    }
+
+    public interface OnMeasurementAddedListener {
+        public void onNewMeasurementInsertedListener(MeasurementEntity measurementEntity);
+    }
+
+    public void registerListener(OnMeasurementAddedListener listener)
+    {
+        onMeasurementAddedListener = listener;
     }
 
     public String getFormatedDate(int day, int month, int year) {

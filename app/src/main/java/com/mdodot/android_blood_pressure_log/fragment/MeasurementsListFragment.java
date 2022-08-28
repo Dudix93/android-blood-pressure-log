@@ -18,22 +18,25 @@ import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
 import java.util.List;
 
-public class MeasurementsListFragment extends Fragment {
+public class MeasurementsListFragment extends Fragment implements NewEntryFragment.OnMeasurementAddedListener {
 
     private View layoutView;
     private MeasurementsAdapter measurementsAdapter;
     private List<MeasurementEntity> measurementsList;
     private RecyclerView measurementsRecyclerView;
     private RoomDB roomDB;
+    private NewEntryFragment newEntryFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.layoutView = inflater.inflate(R.layout.measurements_list_fragment, container, false);
+        this.newEntryFragment = new NewEntryFragment();
+        this.newEntryFragment.registerListener(this);
         loadMesurements();
         return layoutView;
     }
 
-    private void loadMesurements() {
+    public void loadMesurements() {
         roomDB = RoomDB.getInstance(getContext());
         measurementsList = roomDB.measurementDao().getAll();
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -41,6 +44,12 @@ public class MeasurementsListFragment extends Fragment {
         this.measurementsRecyclerView = this.layoutView.findViewById(R.id.measurements_recycler_view);
         this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext());
         this.measurementsRecyclerView.setLayoutManager(llm);
+        this.measurementsRecyclerView.setAdapter(measurementsAdapter);
+    }
+
+    public void onNewMeasurementInsertedListener(MeasurementEntity measurementEntity) {
+        measurementsList = roomDB.measurementDao().getAll();
+        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext());
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
     }
 }
