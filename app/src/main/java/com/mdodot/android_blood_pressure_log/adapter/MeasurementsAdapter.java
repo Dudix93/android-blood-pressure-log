@@ -1,6 +1,8 @@
 package com.mdodot.android_blood_pressure_log.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +12,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mdodot.android_blood_pressure_log.R;
+import com.mdodot.android_blood_pressure_log.activity.MeasurementDetailsActivity;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapter.MeasurementViewHolder> {
@@ -67,7 +71,9 @@ public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapte
         viewHolder.getMeasurementCardView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TO DO
+                Intent intent = new Intent(view.getContext(), MeasurementDetailsActivity.class);
+                intent.putExtra("measurement", measurementsList.get(position));
+                view.getContext().startActivity(intent);
             }
         });
     }

@@ -10,8 +10,11 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="note">Note</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
     <string name="measurements">Measurements</string>
     <string name="type_here">Type here…</string>
     <string name="measurement_saved">Measurement Saved</string>
     <string name="fill_all_data">Fill All Data</string>
+    <string name="no_description">No description</string>
 </resources>

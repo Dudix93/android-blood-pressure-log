@@ -29,6 +29,11 @@
             android:exported="false"
             android:theme="@style/Theme.Androidbloodpressurelog.NoActionBar">
         </activity>
+        <activity
+            android:name=".activity.MeasurementDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Androidbloodpressurelog.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
