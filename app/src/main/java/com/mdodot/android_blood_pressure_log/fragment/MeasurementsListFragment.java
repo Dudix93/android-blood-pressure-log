@@ -1,8 +1,13 @@
 package com.mdodot.android_blood_pressure_log.fragment;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +31,8 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     private RecyclerView measurementsRecyclerView;
     private RoomDB roomDB;
     private NewEntryFragment newEntryFragment;
+    private ActivityResultLauncher<Intent> measurementDetailsActivityResultLauncher;
+    private MeasurementEntity measurementEntity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,7 +40,36 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         this.newEntryFragment = new NewEntryFragment();
         this.newEntryFragment.registerListener(this);
         loadMesurements();
+        registerMeasurementDetailsActivityResultLauncher();
         return layoutView;
+    }
+
+    public void registerMeasurementDetailsActivityResultLauncher() {
+        measurementDetailsActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data.getSerializableExtra("measurement_to_delete") != null && data.getSerializableExtra("measurement_to_delete") instanceof MeasurementEntity) {
+                            measurementEntity = (MeasurementEntity) data.getSerializableExtra("measurement_to_delete");
+                            deleteMeasurement();
+                            }
+                        }
+                    }
+                });
+    }
+
+    public void deleteMeasurement() {
+        roomDB.measurementDao().delete(measurementEntity);
+        measurementsList = roomDB.measurementDao().getAll();
+        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
+        this.measurementsRecyclerView.setAdapter(measurementsAdapter);
+    }
+
+    public void launchMeasurementDetailsActivity(Intent intent) {
+        measurementDetailsActivityResultLauncher.launch(intent);
     }
 
     public void loadMesurements() {
@@ -42,14 +78,14 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         this.measurementsRecyclerView = this.layoutView.findViewById(R.id.measurements_recycler_view);
-        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext());
+        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
         this.measurementsRecyclerView.setLayoutManager(llm);
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
     }
 
     public void onNewMeasurementInsertedListener(MeasurementEntity measurementEntity) {
         measurementsList = roomDB.measurementDao().getAll();
-        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext());
+        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
     }
 }

@@ -14,18 +14,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mdodot.android_blood_pressure_log.R;
 import com.mdodot.android_blood_pressure_log.activity.MeasurementDetailsActivity;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
+import com.mdodot.android_blood_pressure_log.fragment.MeasurementsListFragment;
 
 import java.io.Serializable;
+import java.util.EventListener;
 import java.util.List;
 
 public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapter.MeasurementViewHolder> {
 
     private List<MeasurementEntity> measurementsList;
     private Context mContext;
+    private MeasurementsListFragment measurementsListFragment;
 
-    public MeasurementsAdapter(List<MeasurementEntity> measurementsList, Context context) {
+    public MeasurementsAdapter(List<MeasurementEntity> measurementsList, Context context, MeasurementsListFragment measurementsListFragment) {
         this.measurementsList = measurementsList;
         this.mContext = context;
+        this.measurementsListFragment = measurementsListFragment;
     }
 
     public static class MeasurementViewHolder extends RecyclerView.ViewHolder {
@@ -71,9 +75,9 @@ public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapte
         viewHolder.getMeasurementCardView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), MeasurementDetailsActivity.class);
+                Intent intent = new Intent(mContext, MeasurementDetailsActivity.class);
                 intent.putExtra("measurement", measurementsList.get(position));
-                view.getContext().startActivity(intent);
+                measurementsListFragment.launchMeasurementDetailsActivity(intent);
             }
         });
     }
