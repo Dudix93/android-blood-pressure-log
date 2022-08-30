@@ -13,6 +13,10 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -27,9 +31,6 @@ import com.mdodot.android_blood_pressure_log.databinding.NewEntryFragmentBinding
 import com.mdodot.android_blood_pressure_log.model.PageViewModel;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class NewEntryFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -51,6 +52,7 @@ public class NewEntryFragment extends Fragment {
     private String note;
     private RoomDB roomDB;
     private static OnMeasurementAddedListener onMeasurementAddedListener;
+    private ActivityResultLauncher<Intent> noteActivityResultLauncher;
 
     public static NewEntryFragment newInstance(int index) {
         NewEntryFragment fragment = new NewEntryFragment();
@@ -94,18 +96,25 @@ public class NewEntryFragment extends Fragment {
         noteTextInputEditText = (TextInputEditText) getView().findViewById(R.id.noteTextInputEditText);
         saveMaterialButton = (MaterialButton) getView().findViewById(R.id.saveMaterialButton);
 
+        registerNoteActivityResultLauncher();
         setOnSelectTimePressed();
         setOnSelectDatePressed();
         setOnComposeNotePressed();
         setOnSaveButtonPressed();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == 1) {
-            noteTextInputEditText.setText(data.getStringExtra("note_details"));
-        }
+    public void registerNoteActivityResultLauncher() {
+        noteActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            noteTextInputEditText.setText(data.getStringExtra("note_details"));
+                        }
+                    }
+                });
     }
 
     private void setOnComposeNotePressed() {
@@ -117,7 +126,7 @@ public class NewEntryFragment extends Fragment {
                 if (note != "") {
                     intent.putExtra("note", note);
                 }
-                startActivityForResult(intent, 1);
+                noteActivityResultLauncher.launch(intent);
             }
         });
     }
