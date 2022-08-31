@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.NumberPicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -39,9 +40,9 @@ public class NewEntryFragment extends Fragment {
     private NewEntryFragmentBinding binding;
     private TextInputEditText dateTextInputEditText;
     private TextInputEditText timeTextInputEditText;
-    private TextInputEditText systolicTextInputEditText;
-    private TextInputEditText diastolicTextInputEditText;
-    private TextInputEditText pulseTextInputEditText;
+    private NumberPicker systolicNumberPicker;
+    private NumberPicker diastolicNumberPicker;
+    private NumberPicker pulseNumberPicker;
     private TextInputEditText noteTextInputEditText;
     private MaterialButton saveMaterialButton;
     private Integer systolic;
@@ -90,17 +91,59 @@ public class NewEntryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dateTextInputEditText = (TextInputEditText) getView().findViewById(R.id.dateTextInputEditText);
         timeTextInputEditText = (TextInputEditText) getView().findViewById(R.id.timeTextInputEditText);
-        systolicTextInputEditText = (TextInputEditText) getView().findViewById(R.id.systolicTextInputEditText);
-        diastolicTextInputEditText = (TextInputEditText) getView().findViewById(R.id.diastolicTextInputEditText);
-        pulseTextInputEditText = (TextInputEditText) getView().findViewById(R.id.pulseTextInputEditText);
+        systolicNumberPicker = (NumberPicker) getView().findViewById(R.id.value_systolic);
+        diastolicNumberPicker = (NumberPicker) getView().findViewById(R.id.value_diastolic);
+        pulseNumberPicker = (NumberPicker) getView().findViewById(R.id.value_pulse);
         noteTextInputEditText = (TextInputEditText) getView().findViewById(R.id.noteTextInputEditText);
         saveMaterialButton = (MaterialButton) getView().findViewById(R.id.saveMaterialButton);
 
         registerNoteActivityResultLauncher();
+        setOnSystolicValueChanged();
+        setOnDiastolicValueChanged();
+        setOnPulseValueChanged();
         setOnSelectTimePressed();
         setOnSelectDatePressed();
         setOnComposeNotePressed();
         setOnSaveButtonPressed();
+    }
+
+    public void setOnSystolicValueChanged() {
+        systolicNumberPicker.setMinValue(0);
+        systolicNumberPicker.setMaxValue(300);
+        systolicNumberPicker.setValue(120);
+
+        systolicNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                systolic = systolicNumberPicker.getValue();
+            }
+        });
+    }
+
+    public void setOnDiastolicValueChanged() {
+        diastolicNumberPicker.setMinValue(0);
+        diastolicNumberPicker.setMaxValue(300);
+        diastolicNumberPicker.setValue(70);
+
+        diastolicNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                diastolic = diastolicNumberPicker.getValue();
+            }
+        });
+    }
+
+    public void setOnPulseValueChanged() {
+        pulseNumberPicker.setMinValue(0);
+        pulseNumberPicker.setMaxValue(200);
+        pulseNumberPicker.setValue(60);
+
+        pulseNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                pulse = pulseNumberPicker.getValue();
+            }
+        });
     }
 
     public void registerNoteActivityResultLauncher() {
@@ -191,13 +234,13 @@ public class NewEntryFragment extends Fragment {
 
     public void saveMeasurement() {
         if (
-                !systolicTextInputEditText.getText().toString().matches("")
-                        && !diastolicTextInputEditText.getText().toString().matches("")
-                        && !pulseTextInputEditText.getText().toString().matches("")
+                systolicNumberPicker.getValue() != 0
+                        && diastolicNumberPicker.getValue() != 0
+                        && pulseNumberPicker.getValue() != 0
         ) {
-            systolic = Integer.valueOf(systolicTextInputEditText.getText().toString());
-            diastolic = Integer.valueOf(diastolicTextInputEditText.getText().toString());
-            pulse = Integer.valueOf(pulseTextInputEditText.getText().toString());
+            systolic = systolicNumberPicker.getValue();
+            diastolic = diastolicNumberPicker.getValue();
+            pulse = pulseNumberPicker.getValue();
             note = noteTextInputEditText.getText().toString();
             MeasurementEntity measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time, note);
             roomDB.measurementDao().insert(measurementEntity);

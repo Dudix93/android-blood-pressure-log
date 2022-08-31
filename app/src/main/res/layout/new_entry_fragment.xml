@@ -14,12 +14,88 @@
         android:paddingRight="30dp"
         android:gravity="center_vertical"
         >
+        
+        <LinearLayout
+            android:id="@+id/blood_pressure_mesurements"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/systolic_measurement_layout"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/systolic_label"
+                    android:text="@string/systolic"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <NumberPicker
+                    android:id="@+id/value_systolic"
+                    android:layout_marginEnd="25dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/diastolic_measurement_layout"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/diastolic_label"
+                    android:text="@string/diastolic"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <NumberPicker
+                    android:id="@+id/value_diastolic"
+                    android:layout_marginEnd="25dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/pulse_measurement_layout"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/pulse_label"
+                    android:text="@string/pulse"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <NumberPicker
+                    android:id="@+id/value_pulse"
+                    android:layout_marginEnd="25dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dateTextField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:layout_below="@id/blood_pressure_mesurements"
             android:hint="@string/date">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -49,62 +125,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/systolicTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_below="@id/timeTextField"
-            android:hint="@string/systolic">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/systolicTextInputEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/diastolicTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_below="@+id/systolicTextField"
-            android:hint="@string/diastolic">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/diastolicTextInputEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/pulseTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_below="@id/diastolicTextField"
-            android:hint="@string/pulse">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/pulseTextInputEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/noteTextField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:layout_below="@id/pulseTextField"
+            android:layout_below="@id/timeTextField"
             android:hint="@string/note">
 
             <com.google.android.material.textfield.TextInputEditText
