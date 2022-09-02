@@ -23,7 +23,7 @@ import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
 import java.util.List;
 
-public class MeasurementsListFragment extends Fragment implements NewEntryFragment.OnMeasurementAddedListener {
+public class MeasurementsListFragment extends Fragment implements NewEntryFragment.OnRefreshMeasurementsListListener {
 
     private View layoutView;
     private MeasurementsAdapter measurementsAdapter;
@@ -83,7 +83,7 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
     }
 
-    public void onNewMeasurementInsertedListener(MeasurementEntity measurementEntity) {
+    public void refreshMeasurementsList() {
         measurementsList = roomDB.measurementDao().getAll();
         this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);

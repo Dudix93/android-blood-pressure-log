@@ -17,4 +17,5 @@
     <string name="measurement_saved">Measurement Saved</string>
     <string name="fill_all_data">Fill All Data</string>
     <string name="no_description">No description</string>
+    <string name="no_changes">No changes detected</string>
 </resources>

@@ -1,16 +1,26 @@
 package com.mdodot.android_blood_pressure_log.activity;
 
+import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.button.MaterialButton;
 import com.mdodot.android_blood_pressure_log.R;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
+import com.mdodot.android_blood_pressure_log.fragment.NewEntryFragment;
 
 public class MeasurementDetailsActivity extends AppCompatActivity {
 
@@ -21,6 +31,7 @@ public class MeasurementDetailsActivity extends AppCompatActivity {
     private MaterialButton editMeasurementButton;
     private MaterialButton deleteMeasurementButton;
     private MeasurementEntity measurementEntity;
+    private ActivityResultLauncher<Intent> editMeasurementActivityResultLauncher;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +49,20 @@ public class MeasurementDetailsActivity extends AppCompatActivity {
             measurementEntity = (MeasurementEntity) getIntent().getSerializableExtra("measurement");
             fillMeasurementDetails();
             setOnDeleteClickListener();
+            setOnEditClickListener();
+            registerEditMeasurementActivityResultLauncher();
         }
+    }
+
+    public void setOnEditClickListener() {
+        editMeasurementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), EditMeasurementActivity.class);
+                intent.putExtra("edit_measurement", measurementEntity);
+                editMeasurementActivityResultLauncher.launch(intent);
+            }
+        });
     }
 
     public void setOnDeleteClickListener() {
@@ -62,5 +86,22 @@ public class MeasurementDetailsActivity extends AppCompatActivity {
         } else {
             measurementDetailsNoteTextView.setText(measurementEntity.getNote());
         }
+    }
+
+    public void registerEditMeasurementActivityResultLauncher() {
+        editMeasurementActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data.getSerializableExtra("new_measurement_values") != null && data.getSerializableExtra("new_measurement_values") instanceof MeasurementEntity) {
+                                measurementEntity = (MeasurementEntity) data.getSerializableExtra("new_measurement_values");
+                                fillMeasurementDetails();
+                            }
+                        }
+                    }
+                });
     }
 }

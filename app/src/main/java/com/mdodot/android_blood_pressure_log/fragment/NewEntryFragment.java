@@ -25,12 +25,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
 import com.mdodot.android_blood_pressure_log.R;
 import com.mdodot.android_blood_pressure_log.activity.NoteActivity;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.databinding.NewEntryFragmentBinding;
 import com.mdodot.android_blood_pressure_log.model.PageViewModel;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
+
+import java.util.List;
 
 public class NewEntryFragment extends Fragment {
 
@@ -52,8 +55,9 @@ public class NewEntryFragment extends Fragment {
     private String time;
     private String note;
     private RoomDB roomDB;
-    private static OnMeasurementAddedListener onMeasurementAddedListener;
+    private static OnRefreshMeasurementsListListener onRefreshMeasurementsListListener;
     private ActivityResultLauncher<Intent> noteActivityResultLauncher;
+    private MeasurementEntity measurementEntity;
 
     public static NewEntryFragment newInstance(int index) {
         NewEntryFragment fragment = new NewEntryFragment();
@@ -104,7 +108,24 @@ public class NewEntryFragment extends Fragment {
         setOnSelectTimePressed();
         setOnSelectDatePressed();
         setOnComposeNotePressed();
+        checkForPassedData();
         setOnSaveButtonPressed();
+    }
+
+    public void checkForPassedData() {
+        Bundle arguments = this.getArguments();
+        if (arguments != null) {
+            String measurementJson = arguments.getString("measurement_edit_data");
+            measurementEntity = new Gson().fromJson(measurementJson, MeasurementEntity.class);
+
+            systolicNumberPicker.setValue(measurementEntity.getSystolic());
+            diastolicNumberPicker.setValue(measurementEntity.getDiastolic());
+            pulseNumberPicker.setValue(measurementEntity.getPulse());
+
+            dateTextInputEditText.setText(measurementEntity.getDate());
+            timeTextInputEditText.setText(measurementEntity.getTime());
+            noteTextInputEditText.setText(measurementEntity.getNote());
+        }
     }
 
     public void setOnSystolicValueChanged() {
@@ -242,11 +263,29 @@ public class NewEntryFragment extends Fragment {
             diastolic = diastolicNumberPicker.getValue();
             pulse = pulseNumberPicker.getValue();
             note = noteTextInputEditText.getText().toString();
-            MeasurementEntity measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time, note);
-            roomDB.measurementDao().insert(measurementEntity);
-
-            onMeasurementAddedListener.onNewMeasurementInsertedListener(measurementEntity);
-
+            date = dateTextInputEditText.getText().toString();
+            time = timeTextInputEditText.getText().toString();
+            if (measurementEntity != null) {
+                if (measurementHasBeenchanged(systolic, diastolic, pulse, date, time, note)) {
+                    List<MeasurementEntity> measurementsList = roomDB.measurementDao().getAll();
+                    measurementsList.forEach(measurement -> {
+                        if (measurement.getId() == measurementEntity.getId()) {
+                            roomDB.measurementDao().update(measurementEntity.getId(), systolic, diastolic, pulse, date, time, note);
+                            onRefreshMeasurementsListListener.refreshMeasurementsList();
+                            Intent intent = new Intent();
+                            intent.putExtra("new_measurement_values", new MeasurementEntity(systolic, diastolic, pulse, date, time, note));
+                            getActivity().setResult(Activity.RESULT_OK, intent);
+                            getActivity().finish();
+                        }
+                    });
+                } else {
+                    showToast(getString(R.string.no_changes));
+                }
+            } else {
+                measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time, note);
+                roomDB.measurementDao().insert(measurementEntity);
+                onRefreshMeasurementsListListener.refreshMeasurementsList();
+            }
             showToast(getString(R.string.measurement_saved));
         }
         else {
@@ -254,13 +293,35 @@ public class NewEntryFragment extends Fragment {
         }
     }
 
-    public interface OnMeasurementAddedListener {
-        public void onNewMeasurementInsertedListener(MeasurementEntity measurementEntity);
+    public boolean measurementHasBeenchanged(Integer systolic, Integer diastolic, Integer pulse, String date, String time, String note) {
+        if (measurementEntity.getSystolic() != systolic) {
+            return true;
+        }
+        else if (measurementEntity.getDiastolic() != diastolic) {
+            return true;
+        }
+        else if (measurementEntity.getPulse() != pulse) {
+            return true;
+        }
+        else if (!measurementEntity.getDate().equals(date)) {
+            return true;
+        }
+        else if (!measurementEntity.getTime().equals(time)) {
+            return true;
+        }
+        else if (!measurementEntity.getNote().equals(note)) {
+            return true;
+        }
+        return false;
     }
 
-    public void registerListener(OnMeasurementAddedListener listener)
+    public interface OnRefreshMeasurementsListListener {
+        public void refreshMeasurementsList();
+    }
+
+    public void registerListener(OnRefreshMeasurementsListListener listener)
     {
-        onMeasurementAddedListener = listener;
+        onRefreshMeasurementsListListener = listener;
     }
 
     public String getFormatedDate(int day, int month, int year) {

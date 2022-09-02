@@ -43,6 +43,10 @@ public class MeasurementEntity implements Serializable {
         this.note = note;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getSystolic() {
         return systolic;
     }

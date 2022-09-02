@@ -16,8 +16,15 @@ public interface MeasurentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(MeasurementEntity... measurements);
 
-    @Update
-    void update(MeasurementEntity... measurement);
+    @Query("UPDATE measurements SET " +
+            "systolic = :systolic, " +
+            "diastolic = :diastolic, " +
+            "pulse = :pulse, " +
+            "date = :date, " +
+            "time = :time, " +
+            "note = :note " +
+            "WHERE id = :id")
+    void update(Integer id, Integer systolic, Integer diastolic, Integer pulse, String date, String time, String note);
 
     @Delete
     void delete(MeasurementEntity measurement);
