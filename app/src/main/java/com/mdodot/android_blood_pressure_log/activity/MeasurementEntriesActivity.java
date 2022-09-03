@@ -28,8 +28,8 @@ public class MeasurementEntriesActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
 
         viewPager.setAdapter(sectionsStateAdapter);
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_new_entry));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_all_entries));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_add));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_board));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

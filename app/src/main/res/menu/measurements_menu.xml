@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/measurements_menu"
+        android:icon="@drawable/ic_more"
+        android:title="actions"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_share"
+                android:title="@string/import_export"
+                app:showAsAction="never"
+                android:icon="@drawable/ic_share"
+                />
+            <item
+                android:id="@+id/menu_filters"
+                android:title="@string/filters"
+                app:showAsAction="never"
+                android:icon="@drawable/ic_filter"
+                />
+            <item
+                android:id="@+id/menu_alerts"
+                android:title="@string/alerts"
+                app:showAsAction="never"
+                android:icon="@drawable/ic_alert"
+                />
+`        </menu>
+    </item>
+</menu>

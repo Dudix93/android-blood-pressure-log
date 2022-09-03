@@ -20,9 +20,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
@@ -58,6 +60,7 @@ public class NewEntryFragment extends Fragment {
     private static OnRefreshMeasurementsListListener onRefreshMeasurementsListListener;
     private ActivityResultLauncher<Intent> noteActivityResultLauncher;
     private MeasurementEntity measurementEntity;
+    private MaterialToolbar materialToolbar;
 
     public static NewEntryFragment newInstance(int index) {
         NewEntryFragment fragment = new NewEntryFragment();
@@ -100,6 +103,7 @@ public class NewEntryFragment extends Fragment {
         pulseNumberPicker = (NumberPicker) getView().findViewById(R.id.value_pulse);
         noteTextInputEditText = (TextInputEditText) getView().findViewById(R.id.noteTextInputEditText);
         saveMaterialButton = (MaterialButton) getView().findViewById(R.id.saveMaterialButton);
+        materialToolbar = (MaterialToolbar) getView().findViewById(R.id.toolbar);
 
         registerNoteActivityResultLauncher();
         setOnSystolicValueChanged();
@@ -115,6 +119,9 @@ public class NewEntryFragment extends Fragment {
     public void checkForPassedData() {
         Bundle arguments = this.getArguments();
         if (arguments != null) {
+            if (materialToolbar != null) {
+                materialToolbar.setTitle(R.string.edit_measurement);
+            }
             String measurementJson = arguments.getString("measurement_edit_data");
             measurementEntity = new Gson().fromJson(measurementJson, MeasurementEntity.class);
 
