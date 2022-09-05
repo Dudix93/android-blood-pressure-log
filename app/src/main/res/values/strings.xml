@@ -17,6 +17,11 @@
     <string name="import_export">Import/Export</string>
     <string name="filters">Filters</string>
     <string name="alerts">Alerts</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="date_from">Date from</string>
+    <string name="date_to">Date to</string>
+    <string name="time_range">Time range</string>
     <string name="type_here">Type here…</string>
     <string name="measurement_saved">Measurement Saved</string>
     <string name="fill_all_data">Fill All Data</string>

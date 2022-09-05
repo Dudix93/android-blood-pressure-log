@@ -332,8 +332,11 @@ public class NewEntryFragment extends Fragment {
     }
 
     public String getFormatedDate(int day, int month, int year) {
-        date = (day + "/" + (month + 1) + "/" + year);
-        return date;
+        month++;
+        if (day < 10 && month < 10) return "0" + day + "/0" + month + "/" + year;
+        else if (month < 10) return day + "/0" + month + "/" + year;
+        else if (day < 10) return "0" + day + "/" + month + "/" + year;
+        return day + "/" + month + "/" + year;
     }
 
     public String getFormatedTime(int hour, int minute) {

@@ -8,14 +8,23 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.mdodot.android_blood_pressure_log.R;
 import com.mdodot.android_blood_pressure_log.adapter.MeasurementsAdapter;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
@@ -39,9 +48,47 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         this.layoutView = inflater.inflate(R.layout.measurements_list_fragment, container, false);
         this.newEntryFragment = new NewEntryFragment();
         this.newEntryFragment.registerListener(this);
+        setHasOptionsMenu(true);
+        setToolbarMenuItemsListener();
         loadMesurements();
         registerMeasurementDetailsActivityResultLauncher();
         return layoutView;
+    }
+
+    public void setToolbarMenuItemsListener() {
+        MaterialToolbar toolbar = (MaterialToolbar) layoutView.findViewById(R.id.topAppBar);
+        MenuItem menuFilters = (MenuItem) toolbar.getMenu().findItem(R.id.menu_filters);
+        MenuItem menuShare = (MenuItem) toolbar.getMenu().findItem(R.id.menu_share);
+        MenuItem menuAlerts = (MenuItem) toolbar.getMenu().findItem(R.id.menu_alerts);
+
+        menuFilters.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                showFiltersDialogFragment();
+                return false;
+            }
+        });
+
+        menuShare.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Toast.makeText(getContext(), "share", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+
+        menuAlerts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Toast.makeText(getContext(), "alerts", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });
+    }
+
+    private void showFiltersDialogFragment() {
+        FragmentManager fm = getChildFragmentManager();
+        FiltersDialogFragment.newInstance().show(fm, "FiltersDialogFragmentTAG");
     }
 
     public void registerMeasurementDetailsActivityResultLauncher() {
