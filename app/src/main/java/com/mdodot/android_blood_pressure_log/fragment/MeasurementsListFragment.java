@@ -2,6 +2,7 @@ package com.mdodot.android_blood_pressure_log.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -30,6 +33,8 @@ import com.mdodot.android_blood_pressure_log.adapter.MeasurementsAdapter;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
+import java.util.Date;
+import java.time.LocalTime;
 import java.util.List;
 
 public class MeasurementsListFragment extends Fragment implements NewEntryFragment.OnRefreshMeasurementsListListener {
@@ -42,6 +47,11 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     private NewEntryFragment newEntryFragment;
     private ActivityResultLauncher<Intent> measurementDetailsActivityResultLauncher;
     private MeasurementEntity measurementEntity;
+    private String timeFrom;
+    private String timeTo;
+    private String dateFrom;
+    private String dateTo;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +62,55 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         setToolbarMenuItemsListener();
         loadMesurements();
         registerMeasurementDetailsActivityResultLauncher();
+        setFragmentResultListener();
         return layoutView;
+    }
+
+    public void setFragmentResultListener() {
+        getChildFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                dateFrom = result.getString("filter_date_from");
+                dateTo = result.getString("filter_date_to");
+                timeFrom = result.getString("filter_time_from");
+                timeTo = result.getString("filter_time_to");
+
+                if (dateTo != null && timeFrom != null && timeTo != null) {
+                    filterMeasurementsList();
+                }
+            }
+        });
+    }
+
+    public void filterMeasurementsList() {
+        try {
+            Date endDate = sdf.parse(dateTo);
+            LocalTime startTime = LocalTime.parse(timeFrom);
+            LocalTime endTime = LocalTime.parse(timeTo);
+            for (int i = measurementsList.size()-1 ; i >= 0 ; i -- ){
+                try {
+                    final LocalTime measurementTime = LocalTime.parse(measurementsList.get(i).getTime());
+                    final Date measurementDate = sdf.parse(measurementsList.get(i).getDate());
+                    if (dateFrom != null) {
+                        final Date startDate = sdf.parse(dateFrom);
+                        if (measurementTime.isBefore(startTime) ||
+                                measurementTime.isAfter(endTime) ||
+                                measurementDate.before(startDate) ||
+                                measurementDate.after(endDate)) {
+                            measurementsList.remove(i);
+                        }
+                    } else {
+                        if (measurementTime.isBefore(startTime) ||
+                                measurementTime.isAfter(endTime) ||
+                                measurementDate.after(endDate)) {
+                            measurementsList.remove(i);
+                        }
+                    }
+                } catch (Exception e) {}
+            }
+        } catch (Exception e) {}
+        this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
+        this.measurementsRecyclerView.setAdapter(measurementsAdapter);
     }
 
     public void setToolbarMenuItemsListener() {

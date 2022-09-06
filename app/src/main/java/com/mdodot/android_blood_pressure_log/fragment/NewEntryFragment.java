@@ -340,8 +340,9 @@ public class NewEntryFragment extends Fragment {
     }
 
     public String getFormatedTime(int hour, int minute) {
+        String formattedHour = hour < 10 ? "0" + String.valueOf(hour) : String.valueOf(hour);
         String formattedMinute = minute < 10 ? "0" + String.valueOf(minute) : String.valueOf(minute);
-        time = String.valueOf(hour) + ":" + formattedMinute;
+        time = formattedHour + ":" + formattedMinute;
         return time;
     }
 
