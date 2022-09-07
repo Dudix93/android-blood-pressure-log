@@ -51,11 +51,17 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     private String timeTo;
     private String dateFrom;
     private String dateTo;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private TextView avgSystolicTextView;
+    private TextView avgDiastolicTextView;
+    private TextView avgPulseTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.layoutView = inflater.inflate(R.layout.measurements_list_fragment, container, false);
+        this.avgSystolicTextView = layoutView.findViewById(R.id.avg_systolic);
+        this.avgDiastolicTextView = layoutView.findViewById(R.id.avg_diastolic);
+        this.avgPulseTextView = layoutView.findViewById(R.id.avg_pulse);
         this.newEntryFragment = new NewEntryFragment();
         this.newEntryFragment.registerListener(this);
         setHasOptionsMenu(true);
@@ -63,7 +69,24 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         loadMesurements();
         registerMeasurementDetailsActivityResultLauncher();
         setFragmentResultListener();
+        calculateAverageMeasurements();
         return layoutView;
+    }
+
+    public void calculateAverageMeasurements() {
+        int avgSystolic = 0;
+        int avgDiastolic = 0;
+        int avgPulse = 0;
+
+        for (MeasurementEntity measurement : measurementsList) {
+            avgSystolic += measurement.getSystolic();
+            avgDiastolic += measurement.getDiastolic();
+            avgPulse += measurement.getPulse();
+        }
+
+        avgSystolicTextView.setText(String.valueOf(avgSystolic/measurementsList.size()));
+        avgDiastolicTextView.setText(String.valueOf(avgDiastolic/measurementsList.size()));
+        avgPulseTextView.setText(String.valueOf(avgPulse/measurementsList.size()));
     }
 
     public void setFragmentResultListener() {
@@ -111,6 +134,7 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         } catch (Exception e) {}
         this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
+        calculateAverageMeasurements();
     }
 
     public void setToolbarMenuItemsListener() {
