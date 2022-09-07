@@ -11,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
@@ -40,11 +41,16 @@ public class FiltersDialogFragment extends DialogFragment {
     private DatePickerDialog dateFromDatePicker;
     private DatePickerDialog dateToDatePicker;
     private RangeSlider timeRangeSlider;
-    private TextView timeFrom;
-    private TextView timeTo;
+    private TextView timeFromTextView;
+    private TextView timeToTextView;
     private String dateFrom;
     private String dateTo;
+    private String filterTimeFrom;
+    private String filterTimeTo;
+    private String filterDateFrom;
+    private String filterDateTo;
     private MaterialButton applyFiltersButton;
+    private MaterialButton clearFiltersButton;
 
     public static FiltersDialogFragment newInstance() {
         final FiltersDialogFragment fragment = new FiltersDialogFragment();
@@ -59,9 +65,10 @@ public class FiltersDialogFragment extends DialogFragment {
         fromDateTextInputEditText = (TextInputEditText) view.findViewById(R.id.date_from_text_input_edit_text);
         toDateTextInputEditText = (TextInputEditText) view.findViewById(R.id.date_to_text_input_edit_text);
         timeRangeSlider = (RangeSlider) view.findViewById(R.id.time_range_slider);
-        timeFrom = (TextView) view.findViewById(R.id.time_from);
-        timeTo = (TextView) view.findViewById(R.id.time_to);
+        timeFromTextView = (TextView) view.findViewById(R.id.time_from);
+        timeToTextView = (TextView) view.findViewById(R.id.time_to);
         applyFiltersButton = (MaterialButton) view.findViewById(R.id.apply_filters_button);
+        clearFiltersButton = (MaterialButton) view.findViewById(R.id.clear_filters_button);
 
         dateFromDatePicker = new DatePickerDialog(getContext());
         dateToDatePicker = new DatePickerDialog(getContext());
@@ -75,8 +82,45 @@ public class FiltersDialogFragment extends DialogFragment {
         setOnFromDatePressed();
         setOnToDatePressed();
         setOnApplyButtonPressed();
+        setOnClearButtonPressed();
+        restoreFiltersState();
 
         return view;
+    }
+
+
+    public void restoreFiltersState() {
+        if (getArguments() != null) {
+            filterDateFrom = getArguments().getString("filter_date_from");
+            filterDateTo = getArguments().getString("filter_date_to");
+            filterTimeFrom = getArguments().getString("filter_time_from");
+            filterTimeTo = getArguments().getString("filter_time_to");
+
+            if (filterTimeTo.equals("23:59")) filterTimeTo = "24:00";
+
+            fromDateTextInputEditText.setText(filterDateFrom);
+            toDateTextInputEditText.setText(filterDateTo);
+            timeFromTextView.setText(filterTimeFrom);
+            timeToTextView.setText(filterTimeTo);
+            
+            timeRangeSlider.setValues(Float.valueOf(filterTimeFrom.split(":")[0]),
+                    Float.valueOf(filterTimeTo.split(":")[0]));
+            clearFiltersButton.setEnabled(true);
+        } else {
+            clearFiltersButton.setEnabled(false);
+        }
+    }
+
+    public void setOnClearButtonPressed() {
+        clearFiltersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("clear_filters", true);
+                getParentFragmentManager().setFragmentResult("requestKey", bundle);
+                dismiss();
+            }
+        });
     }
 
     public void setOnApplyButtonPressed() {
@@ -86,8 +130,8 @@ public class FiltersDialogFragment extends DialogFragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("filter_date_from", dateFrom);
                 bundle.putString("filter_date_to", dateTo);
-                bundle.putString("filter_time_from", timeFrom.getText().toString());
-                bundle.putString("filter_time_to", timeTo.getText().toString());
+                bundle.putString("filter_time_from", timeFromTextView.getText().toString());
+                bundle.putString("filter_time_to", timeToTextView.getText().toString());
                 getParentFragmentManager().setFragmentResult("requestKey", bundle);
                 dismiss();
             }
@@ -98,15 +142,15 @@ public class FiltersDialogFragment extends DialogFragment {
         int hourFrom = Math.round(timeRangeSlider.getValueFrom());
         int hourTo = Math.round(timeRangeSlider.getValueTo());
         if (hourFrom < 10) {
-            timeFrom.setText("0" + Integer.toString(Math.round(timeRangeSlider.getValueFrom())) + ":00");
+            timeFromTextView.setText("0" + Integer.toString(Math.round(timeRangeSlider.getValueFrom())) + ":00");
         } else {
-            timeFrom.setText(Integer.toString(Math.round(timeRangeSlider.getValueFrom())) + ":00");
+            timeFromTextView.setText(Integer.toString(Math.round(timeRangeSlider.getValueFrom())) + ":00");
         }
 
         if (hourTo < 10) {
-            timeTo.setText("0" + Integer.toString(Math.round(timeRangeSlider.getValueTo())) + ":00");
+            timeToTextView.setText("0" + Integer.toString(Math.round(timeRangeSlider.getValueTo())) + ":00");
         } else {
-            timeTo.setText(Integer.toString(Math.round(timeRangeSlider.getValueTo())) + ":00");
+            timeToTextView.setText(Integer.toString(Math.round(timeRangeSlider.getValueTo())) + ":00");
         }
 
         timeRangeSlider.addOnSliderTouchListener(new RangeSlider.OnSliderTouchListener() {
@@ -119,16 +163,19 @@ public class FiltersDialogFragment extends DialogFragment {
             public void onStopTrackingTouch(@NonNull RangeSlider slider) {
                 int hourFrom = Math.round(slider.getValues().get(0));
                 int hourTo = Math.round(slider.getValues().get(1));
+                
+                if (hourFrom > 1 || hourTo < 24) clearFiltersButton.setEnabled(true);
+                
                 if (hourFrom < 10) {
-                    timeFrom.setText("0" + Integer.toString(Math.round(slider.getValues().get(0))) + ":00");
+                    timeFromTextView.setText("0" + Integer.toString(Math.round(slider.getValues().get(0))) + ":00");
                 } else {
-                    timeFrom.setText(Integer.toString(Math.round(slider.getValues().get(0))) + ":00");
+                    timeFromTextView.setText(Integer.toString(Math.round(slider.getValues().get(0))) + ":00");
                 }
 
                 if (hourTo < 10) {
-                    timeTo.setText("0" + Integer.toString(Math.round(slider.getValues().get(1))) + ":00");
+                    timeToTextView.setText("0" + Integer.toString(Math.round(slider.getValues().get(1))) + ":00");
                 } else {
-                    timeTo.setText(Integer.toString(Math.round(slider.getValues().get(1))) + ":00");
+                    timeToTextView.setText(Integer.toString(Math.round(slider.getValues().get(1))) + ":00");
                 }
             }
         });
@@ -136,12 +183,12 @@ public class FiltersDialogFragment extends DialogFragment {
 
     public void setOnToDatePressed() {
         final Calendar calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
-        if (day != 0 && month != 0 && year != 0) {
-            toDateTextInputEditText.setText(parsedDate(day, month, year));
-            dateTo = parsedDate(day, month, year);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
+        if (currentDay != 0 && currentMonth != 0 && currentYear != 0) {
+            toDateTextInputEditText.setText(parsedDate(currentDay, currentMonth, currentYear));
+            dateTo = parsedDate(currentDay, currentMonth, currentYear);
         }
 
         toDateTextInputEditText.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +206,8 @@ public class FiltersDialogFragment extends DialogFragment {
                                     .toEpochMilli();
                             toDateTextInputEditText.setText(dateTo);
                             dateFromDatePicker.getDatePicker().setMaxDate(millis);
+
+                            if (day != currentDay || month != currentMonth || year != currentYear) clearFiltersButton.setEnabled(true);
                         }
                     }
                 });

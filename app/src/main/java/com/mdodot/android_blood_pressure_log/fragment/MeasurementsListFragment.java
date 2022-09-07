@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -47,10 +48,10 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     private NewEntryFragment newEntryFragment;
     private ActivityResultLauncher<Intent> measurementDetailsActivityResultLauncher;
     private MeasurementEntity measurementEntity;
-    private String timeFrom;
-    private String timeTo;
-    private String dateFrom;
-    private String dateTo;
+    private String filterTimeFrom;
+    private String filterTimeTo;
+    private String filterDateFrom;
+    private String filterDateTo;
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private TextView avgSystolicTextView;
     private TextView avgDiastolicTextView;
@@ -93,13 +94,20 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         getChildFragmentManager().setFragmentResultListener("requestKey", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                dateFrom = result.getString("filter_date_from");
-                dateTo = result.getString("filter_date_to");
-                timeFrom = result.getString("filter_time_from");
-                timeTo = result.getString("filter_time_to");
+                if (result.getBoolean("clear_filters")) {
+                    filterDateFrom = filterDateTo = filterTimeFrom = filterTimeTo = null;
+                    refreshMeasurementsList();
+                } else {
+                    filterDateFrom = result.getString("filter_date_from");
+                    filterDateTo = result.getString("filter_date_to");
+                    filterTimeFrom = result.getString("filter_time_from");
+                    filterTimeTo = result.getString("filter_time_to");
 
-                if (dateTo != null && timeFrom != null && timeTo != null) {
-                    filterMeasurementsList();
+                    if (filterTimeTo.equals("24:00")) filterTimeTo = "23:59";
+
+                    if (filterDateTo != null && filterTimeFrom != null && filterTimeTo != null) {
+                        filterMeasurementsList();
+                    }
                 }
             }
         });
@@ -107,15 +115,15 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
 
     public void filterMeasurementsList() {
         try {
-            Date endDate = sdf.parse(dateTo);
-            LocalTime startTime = LocalTime.parse(timeFrom);
-            LocalTime endTime = LocalTime.parse(timeTo);
+            Date endDate = sdf.parse(filterDateTo);
+            LocalTime startTime = LocalTime.parse(filterTimeFrom);
+            LocalTime endTime = LocalTime.parse(filterTimeTo);
             for (int i = measurementsList.size()-1 ; i >= 0 ; i -- ){
                 try {
                     final LocalTime measurementTime = LocalTime.parse(measurementsList.get(i).getTime());
                     final Date measurementDate = sdf.parse(measurementsList.get(i).getDate());
-                    if (dateFrom != null) {
-                        final Date startDate = sdf.parse(dateFrom);
+                    if (filterDateFrom != null) {
+                        final Date startDate = sdf.parse(filterDateFrom);
                         if (measurementTime.isBefore(startTime) ||
                                 measurementTime.isAfter(endTime) ||
                                 measurementDate.before(startDate) ||
@@ -169,8 +177,16 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     }
 
     private void showFiltersDialogFragment() {
-        FragmentManager fm = getChildFragmentManager();
-        FiltersDialogFragment.newInstance().show(fm, "FiltersDialogFragmentTAG");
+        DialogFragment filtersDialogFragment = FiltersDialogFragment.newInstance();
+        if (filterTimeFrom != null && filterTimeTo != null && filterDateTo != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString("filter_date_from", filterDateFrom);
+            bundle.putString("filter_date_to", filterDateTo);
+            bundle.putString("filter_time_from", filterTimeFrom);
+            bundle.putString("filter_time_to", filterTimeTo);
+            filtersDialogFragment.setArguments(bundle);
+        }
+        filtersDialogFragment.show(getChildFragmentManager(), "FiltersDialogFragmentTAG");
     }
 
     public void registerMeasurementDetailsActivityResultLauncher() {
@@ -216,5 +232,6 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         measurementsList = roomDB.measurementDao().getAll();
         this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
+        calculateAverageMeasurements();
     }
 }
