@@ -24,6 +24,9 @@
     <string name="dia">DIA</string>
     <string name="avg">AVG.</string>
     <string name="clear">Clear</string>
+    <string name="import_excel">Import as excel</string>
+    <string name="import_pdf">Import as pdf</string>
+    <string name="export_excel">Export as excel</string>
     <string name="date_from">Date from</string>
     <string name="date_to">Date to</string>
     <string name="time_range">Time range</string>
@@ -32,4 +35,6 @@
     <string name="fill_all_data">Fill All Data</string>
     <string name="no_description">No description</string>
     <string name="no_changes">No changes detected</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

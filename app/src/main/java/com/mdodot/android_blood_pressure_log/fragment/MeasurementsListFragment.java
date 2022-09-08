@@ -34,6 +34,7 @@ import com.mdodot.android_blood_pressure_log.adapter.MeasurementsAdapter;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.time.LocalTime;
 import java.util.List;
@@ -162,7 +163,11 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         menuShare.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Toast.makeText(getContext(), "share", Toast.LENGTH_LONG).show();
+                ShareDialogFragment shareDialogFragment = ShareDialogFragment.newInstance();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("measurements_list", new ArrayList<MeasurementEntity>(measurementsList));
+                shareDialogFragment.setArguments(bundle);
+                shareDialogFragment.show(getChildFragmentManager(), "ShareDialogFragmentTAG");
                 return false;
             }
         });
