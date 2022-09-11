@@ -76,19 +76,25 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     }
 
     public void calculateAverageMeasurements() {
-        int avgSystolic = 0;
-        int avgDiastolic = 0;
-        int avgPulse = 0;
+        if (measurementsList.size() > 0) {
+            int avgSystolic = 0;
+            int avgDiastolic = 0;
+            int avgPulse = 0;
 
-        for (MeasurementEntity measurement : measurementsList) {
-            avgSystolic += measurement.getSystolic();
-            avgDiastolic += measurement.getDiastolic();
-            avgPulse += measurement.getPulse();
+            for (MeasurementEntity measurement : measurementsList) {
+                avgSystolic += measurement.getSystolic();
+                avgDiastolic += measurement.getDiastolic();
+                avgPulse += measurement.getPulse();
+            }
+
+            avgSystolicTextView.setText(String.valueOf(avgSystolic/measurementsList.size()));
+            avgDiastolicTextView.setText(String.valueOf(avgDiastolic/measurementsList.size()));
+            avgPulseTextView.setText(String.valueOf(avgPulse/measurementsList.size()));
+        } else {
+            avgSystolicTextView.setText("-----");
+            avgDiastolicTextView.setText("-----");
+            avgPulseTextView.setText("-----");
         }
-
-        avgSystolicTextView.setText(String.valueOf(avgSystolic/measurementsList.size()));
-        avgDiastolicTextView.setText(String.valueOf(avgDiastolic/measurementsList.size()));
-        avgPulseTextView.setText(String.valueOf(avgPulse/measurementsList.size()));
     }
 
     public void setFragmentResultListener() {
