@@ -1,7 +1,10 @@
 package com.mdodot.android_blood_pressure_log.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Instrumentation;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -32,11 +35,14 @@ public class MeasurementDetailsActivity extends AppCompatActivity {
     private MaterialButton deleteMeasurementButton;
     private MeasurementEntity measurementEntity;
     private ActivityResultLauncher<Intent> editMeasurementActivityResultLauncher;
+    private Context mContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.measurement_details_activity);
+
+        this.mContext = this;
 
         measurementDetailsDateTextView = findViewById(R.id.measurement_details_date);
         measurementDetailsTextView = findViewById(R.id.measurement_details_blood_pressure);
@@ -69,10 +75,20 @@ public class MeasurementDetailsActivity extends AppCompatActivity {
         deleteMeasurementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra("measurement_to_delete", measurementEntity);
-                setResult(RESULT_OK, intent );
-                finish();
+                new AlertDialog.Builder(mContext)
+                        .setTitle(getString(R.string.delete_measurment))
+                        .setMessage(getString(R.string.delete_entry_message))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent();
+                                intent.putExtra("measurement_to_delete", measurementEntity);
+                                setResult(RESULT_OK, intent );
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(R.drawable.ic_delete)
+                        .show();
             }
         });
     }

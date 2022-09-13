@@ -1,8 +1,10 @@
 package com.mdodot.android_blood_pressure_log.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Bundle;
@@ -194,7 +196,7 @@ public class NewEntryFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), NoteActivity.class);
                 String note = noteTextInputEditText.getText().toString();
-                if (note != "") {
+                if (!note.equals("")) {
                     intent.putExtra("note", note);
                 }
                 noteActivityResultLauncher.launch(intent);
@@ -206,7 +208,17 @@ public class NewEntryFragment extends Fragment {
         saveMaterialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveMeasurement();
+                new AlertDialog.Builder(getContext())
+                        .setTitle(getString(R.string.save_measurment))
+                        .setMessage(getString(R.string.save_entry_message))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveMeasurement();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(R.drawable.ic_save)
+                        .show();
             }
         });
     }
