@@ -30,6 +30,8 @@ import android.widget.Toolbar;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.mdodot.android_blood_pressure_log.R;
+import com.mdodot.android_blood_pressure_log.activity.AlertActivity;
+import com.mdodot.android_blood_pressure_log.activity.AlertsActivity;
 import com.mdodot.android_blood_pressure_log.adapter.MeasurementsAdapter;
 import com.mdodot.android_blood_pressure_log.database.RoomDB;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
@@ -153,7 +155,7 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
     }
 
     public void setToolbarMenuItemsListener() {
-        MaterialToolbar toolbar = (MaterialToolbar) layoutView.findViewById(R.id.topAppBar);
+        MaterialToolbar toolbar = (MaterialToolbar) layoutView.findViewById(R.id.measurements_toolbar);
         MenuItem menuFilters = (MenuItem) toolbar.getMenu().findItem(R.id.menu_filters);
         MenuItem menuShare = (MenuItem) toolbar.getMenu().findItem(R.id.menu_share);
         MenuItem menuAlerts = (MenuItem) toolbar.getMenu().findItem(R.id.menu_alerts);
@@ -181,7 +183,8 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         menuAlerts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Toast.makeText(getContext(), "alerts", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), AlertsActivity.class);
+                startActivity(intent);
                 return false;
             }
         });

@@ -6,12 +6,13 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.mdodot.android_blood_pressure_log.entity.AlertEntity;
 import com.mdodot.android_blood_pressure_log.entity.MeasurementEntity;
 
-@Database(entities = MeasurementEntity.class, version = 3, exportSchema = false)
+@Database(entities = {MeasurementEntity.class, AlertEntity.class}, version = 4, exportSchema = false)
 public abstract class RoomDB extends RoomDatabase {
     private static RoomDB database;
-    private static final String DATABASE_NAME = "Measurements";
+    private static final String DATABASE_NAME = "MeasurementsAndAlerts";
 
     public synchronized static RoomDB getInstance(Context context) {
         if (database == null) {
@@ -24,4 +25,6 @@ public abstract class RoomDB extends RoomDatabase {
     }
 
     public abstract MeasurentDao measurementDao();
+
+    public abstract AlertDao alertDao();
 }

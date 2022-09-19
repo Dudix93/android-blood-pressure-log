@@ -24,6 +24,15 @@
     <string name="dia">DIA</string>
     <string name="avg">AVG.</string>
     <string name="clear">Clear</string>
+    <string name="add">Add</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="update">Update</string>
     <string name="import_excel">Import as excel</string>
     <string name="import_pdf">Import as pdf</string>
     <string name="export_excel">Export as excel</string>
@@ -40,4 +49,5 @@
     <string name="delete_entry_message">Do you want to delete this entry?</string>
     <string name="delete_measurment">Delete measurement</string>
     <string name="accept_storage">Accept storage permissions</string>
+    <string name="select_day_message">Select at least one day</string>
 </resources>

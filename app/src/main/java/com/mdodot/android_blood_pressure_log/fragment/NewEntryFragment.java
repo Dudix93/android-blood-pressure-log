@@ -303,7 +303,7 @@ public class NewEntryFragment extends Fragment {
             } else {
                 measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time, note);
                 roomDB.measurementDao().insert(measurementEntity);
-                onRefreshMeasurementsListListener.refreshMeasurementsList();
+                if (onRefreshMeasurementsListListener != null) onRefreshMeasurementsListListener.refreshMeasurementsList();
             }
             showToast(getString(R.string.measurement_saved));
         }
