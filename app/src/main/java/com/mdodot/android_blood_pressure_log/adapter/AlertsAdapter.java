@@ -101,7 +101,7 @@ public class AlertsAdapter extends RecyclerView.Adapter<AlertsAdapter.AlertViewH
     }
 
     public void markSelectedDays(AlertViewHolder viewHolder, int position) {
-        int selectedColor = mContext.getResources().getColor(R.color.teal_200);
+        int selectedColor = mContext.getResources().getColor(R.color.ABD9FF);
         if (alertsList.get(position).isMonday()) viewHolder.getAlertMondayTextView().setTextColor(selectedColor);
         if (alertsList.get(position).isTuesday()) viewHolder.getAlertTuesdayTextView().setTextColor(selectedColor);
         if (alertsList.get(position).isWednesday()) viewHolder.getAlertWednesdayTextView().setTextColor(selectedColor);

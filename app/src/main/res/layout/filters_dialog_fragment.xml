@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
+    android:background="?colorPrimaryVariant"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <com.google.android.material.textfield.TextInputLayout
@@ -20,6 +21,7 @@
             android:id="@+id/date_from_text_input_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?colorPrimary"
             android:focusable="false"
             />
 
@@ -36,6 +38,7 @@
             android:id="@+id/date_to_text_input_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?colorPrimary"
             android:focusable="false"
             />
 

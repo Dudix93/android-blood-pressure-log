@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -82,6 +84,7 @@ public class NewEntryFragment extends Fragment {
         }
         pageViewModel.setIndex(index);
         this.roomDB = RoomDB.getInstance(getContext());
+        markSelectedNightMode();
     }
 
     @Override
@@ -290,6 +293,7 @@ public class NewEntryFragment extends Fragment {
                     measurementsList.forEach(measurement -> {
                         if (measurement.getId() == measurementEntity.getId()) {
                             roomDB.measurementDao().update(measurementEntity.getId(), systolic, diastolic, pulse, date, time, note);
+                            showToast(getString(R.string.measurement_saved));
                             onRefreshMeasurementsListListener.refreshMeasurementsList();
                             Intent intent = new Intent();
                             intent.putExtra("new_measurement_values", new MeasurementEntity(systolic, diastolic, pulse, date, time, note));
@@ -303,9 +307,10 @@ public class NewEntryFragment extends Fragment {
             } else {
                 measurementEntity = new MeasurementEntity(systolic, diastolic, pulse, date, time, note);
                 roomDB.measurementDao().insert(measurementEntity);
+                showToast(getString(R.string.measurement_saved));
+                measurementEntity = null;
                 if (onRefreshMeasurementsListListener != null) onRefreshMeasurementsListListener.refreshMeasurementsList();
             }
-            showToast(getString(R.string.measurement_saved));
         }
         else {
             showToast(getString(R.string.fill_all_data));
@@ -360,6 +365,24 @@ public class NewEntryFragment extends Fragment {
 
     public void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    public void markSelectedNightMode() {
+        SharedPreferences sharedPreferencesRead = getContext().getSharedPreferences("MySharedPref", 0);
+        String nightModeSelection = sharedPreferencesRead.getString("nightMode", "");
+        if (!nightModeSelection.isEmpty()) {
+            switch (nightModeSelection) {
+                case "auto":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                    break;
+                case "off":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    break;
+                case "on":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    break;
+            }
+        }
     }
 
     @Override

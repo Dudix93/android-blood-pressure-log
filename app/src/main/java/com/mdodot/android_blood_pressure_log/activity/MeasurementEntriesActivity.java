@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TableLayout;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -21,7 +22,6 @@ public class MeasurementEntriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.measurement_entries_activity);
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         SectionsStateAdapter sectionsStateAdapter = new SectionsStateAdapter(fragmentManager, getLifecycle());
         ViewPager2 viewPager = findViewById(R.id.view_pager);

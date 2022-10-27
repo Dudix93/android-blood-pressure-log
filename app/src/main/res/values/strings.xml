@@ -33,7 +33,11 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
     <string name="update">Update</string>
-    <string name="import_excel">Import as excel</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="automatic">Automatic</string>
+
+    <string name="import_excel">Import as spreadsheet</string>
     <string name="import_pdf">Import as pdf</string>
     <string name="export_excel">Export as excel</string>
     <string name="date_from">Date from</string>
@@ -50,4 +54,5 @@
     <string name="delete_measurment">Delete measurement</string>
     <string name="accept_storage">Accept storage permissions</string>
     <string name="select_day_message">Select at least one day</string>
+    <string name="night_mode">Night mode</string>
 </resources>

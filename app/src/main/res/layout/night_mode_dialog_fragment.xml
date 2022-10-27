@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?colorPrimaryVariant"
+    tools:context=".fragment.ShareDialogFragment">
+
+    <LinearLayout
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioGroup
+            android:id="@+id/night_mode_radio_group"
+            android:checkedButton="@+id/night_mode_button_automatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/night_mode_button_automatic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/automatic"/>
+            <RadioButton
+                android:id="@+id/night_mode_button_off"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/off"/>
+            <RadioButton
+                android:id="@+id/night_mode_button_on"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/on"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -158,7 +159,8 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         MaterialToolbar toolbar = (MaterialToolbar) layoutView.findViewById(R.id.measurements_toolbar);
         MenuItem menuFilters = (MenuItem) toolbar.getMenu().findItem(R.id.menu_filters);
         MenuItem menuShare = (MenuItem) toolbar.getMenu().findItem(R.id.menu_share);
-        MenuItem menuAlerts = (MenuItem) toolbar.getMenu().findItem(R.id.menu_alerts);
+//        MenuItem menuAlerts = (MenuItem) toolbar.getMenu().findItem(R.id.menu_alerts);
+        MenuItem menuNightMode = (MenuItem) toolbar.getMenu().findItem(R.id.menu_night_mode);
 
         menuFilters.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -171,26 +173,43 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         menuShare.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                ShareDialogFragment shareDialogFragment = ShareDialogFragment.newInstance();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("measurements_list", new ArrayList<MeasurementEntity>(measurementsList));
-                shareDialogFragment.setArguments(bundle);
-                shareDialogFragment.show(getChildFragmentManager(), "ShareDialogFragmentTAG");
+                showImportDialogFragment();
                 return false;
             }
         });
 
-        menuAlerts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//        menuAlerts.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem menuItem) {
+//                Intent intent = new Intent(getContext(), AlertsActivity.class);
+//                startActivity(intent);
+//                return false;
+//            }
+//        });
+
+        menuNightMode.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent intent = new Intent(getContext(), AlertsActivity.class);
-                startActivity(intent);
+                showNightModeDialogFragment();
                 return false;
             }
         });
     }
 
-    private void showFiltersDialogFragment() {
+    public void showNightModeDialogFragment() {
+        NightModeDialogFragment nightModeDialogFragment = NightModeDialogFragment.newInstance();
+        nightModeDialogFragment.show(getChildFragmentManager(), "NightModeDialogFragmentTAG");
+    }
+
+    public void showImportDialogFragment() {
+        ShareDialogFragment shareDialogFragment = ShareDialogFragment.newInstance();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("measurements_list", new ArrayList<MeasurementEntity>(measurementsList));
+        shareDialogFragment.setArguments(bundle);
+        shareDialogFragment.show(getChildFragmentManager(), "ShareDialogFragmentTAG");
+    }
+
+    public void showFiltersDialogFragment() {
         DialogFragment filtersDialogFragment = FiltersDialogFragment.newInstance();
         if (filterTimeFrom != null && filterTimeTo != null && filterDateTo != null) {
             Bundle bundle = new Bundle();
@@ -225,6 +244,11 @@ public class MeasurementsListFragment extends Fragment implements NewEntryFragme
         measurementsList = roomDB.measurementDao().getAll();
         this.measurementsAdapter = new MeasurementsAdapter(measurementsList, getContext(), MeasurementsListFragment.this);
         this.measurementsRecyclerView.setAdapter(measurementsAdapter);
+        if (measurementsList.size() == 0) {
+            avgSystolicTextView.setText("-----");
+            avgDiastolicTextView.setText("-----");
+            avgPulseTextView.setText("-----");
+        }
     }
 
     public void launchMeasurementDetailsActivity(Intent intent) {

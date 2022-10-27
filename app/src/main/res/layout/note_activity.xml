@@ -6,6 +6,7 @@
     <LinearLayout
         android:id="@+id/note_layout"
         android:orientation="vertical"
+        android:background="?colorSecondary"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,6 +21,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/composeNoteTextInputEditText"
                 android:gravity="top"
+                android:background="?colorSecondaryVariant"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />

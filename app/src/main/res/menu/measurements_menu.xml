@@ -20,11 +20,17 @@
                 app:showAsAction="never"
                 android:icon="@drawable/ic_filter"
                 />
+<!--            <item-->
+<!--                android:id="@+id/menu_alerts"-->
+<!--                android:title="@string/alerts"-->
+<!--                app:showAsAction="never"-->
+<!--                android:icon="@drawable/ic_alert"-->
+<!--                />-->
             <item
-                android:id="@+id/menu_alerts"
-                android:title="@string/alerts"
+                android:id="@+id/menu_night_mode"
+                android:title="@string/night_mode"
                 app:showAsAction="never"
-                android:icon="@drawable/ic_alert"
+                android:icon="@drawable/ic_night"
                 />
 `        </menu>
     </item>
